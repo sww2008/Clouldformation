@@ -1,1 +1,1 @@
-aws cloudformation create-stack --stack-name river_teststack --template-body file://sampleTemplate.yml --capabilities CAPABILITY_IAM 
+aws cloudformation create-stack --stack-name artemiso --template-body file://sampleTemplate.yml --capabilities CAPABILITY_IAM 

@@ -1,67 +1,81 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Resources:
-  sampleApplication:
+  artemisoApplication:
     Type: AWS::ElasticBeanstalk::Application
     Properties:
-      Description: AWS Elastic Beanstalk Sample Application
-  sampleApplicationVersion:
-    Type: AWS::ElasticBeanstalk::ApplicationVersion
-    Properties:
-      ApplicationName:
-        Ref: sampleApplication
-      Description: AWS ElasticBeanstalk Sample Application Version
-      SourceBundle:
-        S3Bucket: !Sub "elasticbeanstalk-samples-${AWS::Region}"
-        S3Key: php-newsample-app.zip
-  sampleConfigurationTemplate:
-    Type: AWS::ElasticBeanstalk::ConfigurationTemplate
-    Properties:
-      ApplicationName:
-        Ref: sampleApplication
-      Description: AWS ElasticBeanstalk Sample Configuration Template
-      OptionSettings:
-      - Namespace: aws:autoscaling:asg
-        OptionName: MinSize
-        Value: '1'
-      - Namespace: aws:autoscaling:asg
-        OptionName: MaxSize
-        Value: '1'
-      - Namespace: aws:elasticbeanstalk:environment
-        OptionName: EnvironmentType
-        Value: LoadBalanced
-      - Namespace: aws:autoscaling:launchconfiguration
-        OptionName: IamInstanceProfile
-        Value: !Ref MyInstanceProfile        
-      SolutionStackName: 64bit Amazon Linux 2 v3.3.3 running PHP 8.0
-  sampleEnvironment:
+      Description: AWS Elastic Beanstalk artemisoApplication
+  artemisoDeployEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
       ApplicationName:
-        Ref: sampleApplication
-      Description: AWS ElasticBeanstalk Sample Environment
-      TemplateName:
-        Ref: sampleConfigurationTemplate
-      VersionLabel:
-        Ref: sampleApplicationVersion
-  MyInstanceRole:
-    Type: AWS::IAM::Role
-    Properties: 
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - ec2.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Description: Beanstalk EC2 role
-      ManagedPolicyArns: 
-        - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
-        - arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker
-        - arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier
-  MyInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties: 
-      Roles:
-        - !Ref MyInstanceRole
+        Ref: artemisoApplication
+      EnvironmentName: artemisoDeploy
+      Description: AWS ElasticBeanstalk artemisoDeployEnvironment
+      CNAMEPrefix: artemiso
+      SolutionStackName: 64bit Amazon Linux 2 v3.4.3 running Docker
+      OptionSettings:
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: ImageId
+          Value: ami-05f6fc78fdb561975
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: InstanceType
+          Value: t2.micro
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: IamInstanceProfile
+          Value: aws-elasticbeanstalk-ec2-role
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: EC2KeyName
+          Value: devops-vivien
+        - Namespace: aws:autoscaling:asg
+          OptionName: MinSize
+          Value: '1' 
+        - Namespace: aws:autoscaling:asg
+          OptionName: MaxSize
+          Value: '1' 
+        - Namespace: aws:ec2:vpc
+          OptionName: VPCId
+          Value: vpc-0d457998d25013f3a
+        - Namespace: aws:ec2:vpc
+          OptionName: Subnets
+          Value: subnet-013b9f721c7a47996
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: ServiceRole
+          Value: arn:aws:iam::454269628278:role/aws-elasticbeanstalk-service-role
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: EnvironmentType
+          Value: SingleInstance
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  # MyInstanceRole:
+  #   Type: AWS::IAM::Role
+  #   Properties: 
+  #     AssumeRolePolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - ec2.amazonaws.com
+  #           Action:
+  #             - sts:AssumeRole
+  #     Description: Beanstalk EC2 role
+  #     ManagedPolicyArns: 
+  #       - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
+  #       - arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker
+  #       - arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier
+  # MyInstanceProfile:
+  #   Type: AWS::IAM::InstanceProfile
+  #   Properties: 
+  #     Roles:
+  #       - !Ref MyInstanceRole
+        # VersionLabel:
+      #   Ref: sampleApplicationVersion
+
+
+

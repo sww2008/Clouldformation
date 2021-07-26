@@ -1,1 +1,1 @@
-aws cloudformation delete-stack --stack-name river_teststack
+aws cloudformation delete-stack --stack-name artemiso
